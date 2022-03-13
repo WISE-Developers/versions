@@ -1,0 +1,46 @@
+name: Monthly Build
+
+on:
+  schedule:
+    # 8AM UTC on the first day of each month
+    - cron:  '0 8 1 * *'
+
+jobs:
+  version:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+    - uses: actions/checkout@v3
+    - name: Update the version number
+      shell: pwsh
+      run: |
+        $date = Get-Date
+        $versions = [ordered]@{}
+        Get-Content versions.properties | ForEach-Object { $versions.add($_.split('=', 2)[0], $_.split('=', 2)[1]) }
+        $versions.prometheus = "7.$($date.year).$($date.month)-0"
+        $versions.GetEnumerator() | % { "$($_.Name)=$($_.Value)" } | Out-File versions.properties -Encoding "ASCII"
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add versions.properties
+        git commit -m "Update the version" -m "[skip ci]"
+
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.ref }}
+        tags: true
+
+    - uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.PSAAS_PAT }}
+        script: |
+          await github.rest.actions.createWorkflowDispatch({
+            owner: 'PSaaS-Developers',
+            repo: 'REDapp',
+            workflow_id: 'maven-publish.yml',
+            ref: 'main'
+          })
