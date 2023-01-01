@@ -39,7 +39,7 @@ jobs:
         github-token: ${{ secrets.PSAAS_PAT }}
         script: |
           await github.rest.actions.createWorkflowDispatch({
-            owner: 'PSaaS-Developers',
+            owner: 'WISE-Developers',
             repo: 'REDapp',
             workflow_id: 'maven-publish.yml',
             ref: 'main'
