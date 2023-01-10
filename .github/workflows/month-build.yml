@@ -44,3 +44,36 @@ jobs:
             workflow_id: 'maven-publish.yml',
             ref: 'main'
           })
+    - uses: actions/github-script@v6
+      name: Build WISE Builder
+      with:
+        github-token: ${{ secrets.PSAAS_PAT }}
+        script: |
+          await github.rest.actions.createWorkflowDispatch({
+            owner: 'WISE-Developers',
+            repo: 'WISE_Builder_Component',
+            workflow_id: 'maven-publish.yml',
+            ref: 'main'
+          })
+    - uses: actions/github-script@v6
+      name: Build WISE Manager
+      with:
+        github-token: ${{ secrets.PSAAS_PAT }}
+        script: |
+          await github.rest.actions.createWorkflowDispatch({
+            owner: 'WISE-Developers',
+            repo: 'WISE_Manager_Component',
+            workflow_id: 'maven-publish.yml',
+            ref: 'main'
+          })
+    - uses: actions/github-script@v6
+      name: Build WISE
+      with:
+        github-token: ${{ secrets.PSAAS_PAT }}
+        script: |
+          await github.rest.actions.createWorkflowDispatch({
+            owner: 'WISE-Developers',
+            repo: 'WISE_Application',
+            workflow_id: 'cmake.yml',
+            ref: 'main'
+          })
