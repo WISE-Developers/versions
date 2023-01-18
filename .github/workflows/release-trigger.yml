@@ -12,16 +12,6 @@ jobs:
     
     steps:
     - uses: actions/github-script@v6
-      with:
-        github-token: ${{ secrets.PSAAS_PAT }}
-        script: |
-          await github.rest.actions.createWorkflowDispatch({
-            owner: 'WISE-Developers',
-            repo: 'REDapp',
-            workflow_id: 'maven-publish.yml',
-            ref: 'main'
-          })
-    - uses: actions/github-script@v6
       name: Build WISE Builder
       with:
         github-token: ${{ secrets.PSAAS_PAT }}
